@@ -1,2 +1,2 @@
-# cal-app
+# fittrack
 calorie tracking app
