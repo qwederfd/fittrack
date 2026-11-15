@@ -165,7 +165,6 @@ function onb(){const I=(l,id,t="number",o="")=>`<div><label>${l}</label><input i
 function onbDone(){const g=i=>$(i).value,n=i=>parseFloat(g(i));const a=n("oa"),h=n("oh"),w=n("ow"),t=n("ot"),b=n("ob");
  if(!(a>=13&&a<=100&&h>=100&&h<=230&&w>=30&&w<=300&&t>=30&&t<=300&&b>=0)){$("oe").textContent="Please fill in every number with sensible values (age 13+).";return}
  S.p={name:g("on").trim(),age:a,sex:g("os"),h,w0:w,tw:t,act:+g("oc"),budget:b};S.ok=true;save();render()}
-render();
 let uid=null,sb=null,authMsg="";
 function authView(){return `<h1>FitTrack</h1><div class="card"><label>Email</label><input id="ae" type="email" autocomplete="email"><label>Password</label><input id="ap" type="password" autocomplete="current-password"><div class="mu" style="color:#e5a04a;margin:6px 0">${esc(authMsg)}</div><button style="width:100%" onclick="auth('in')">Sign in</button><div class="row" style="margin-top:8px"><button class="g" onclick="auth('up')">Create account</button><button class="g" onclick="auth('reset')">Forgot password</button></div></div><div class="mu">Your data is private to your account.</div>`}
 async function auth(m){const e=$("ae").value.trim(),p=$("ap").value;if(!sb){authMsg="Backend not set up yet (see README).";render();return}
