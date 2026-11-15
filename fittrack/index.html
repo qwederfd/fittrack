@@ -238,7 +238,7 @@ function e1rm(w,r){return r<=1?w:w*(1+r/30)}
 function suggestion(name,reps){const L=S.log[name]||[];if(!L.length)return"No history yet. Start light and aim for 3×8–12 with 1–2 reps left in the tank.";
  const last=L[L.length-1];const ok=last.sets.length>=2&&last.sets.every(s=>s[1]>=12);
  const w=Math.max(...last.sets.map(s=>s[0]));return ok?`You hit 12 reps on every set at ${w} kg. Consider going up by the smallest step next time.`:`Last: ${last.sets.map(s=>s[0]+"×"+s[1]).join(", ")}. Keep ${w} kg until all sets reach 12 reps.`}
-function render(){if(!uid){$("nav").innerHTML="";$("app").innerHTML=authView();return}if(!S.ok){$("nav").innerHTML="";$("app").innerHTML=onb();return}
+function render(){if(!booted){$("nav").innerHTML="";$("app").innerHTML='<div class="mu" style="padding:20px">Loading…</div>';return}if(!uid){$("nav").innerHTML="";$("app").innerHTML=authView();return}if(!S.ok){$("nav").innerHTML="";$("app").innerHTML=onb();return}
  const nav=[["home","⌂","Home",22],["food","🍽","Food",20],["scan","📷","Scan",26,"big"],["train","🏋","Train",24],["prog","📈","Progress",19]];
  $("nav").innerHTML=nav.map(n=>`<button class="${tab===n[0]?"on":""} ${n[4]||""}" onclick="go('${n[0]}')"><b style="font-size:${n[3]}px">${n[1]}</b>${n[2]}</button>`).join("");
  FT=[];syncP();$("app").innerHTML=({home,food,train,prog:progress,me,scan})[tab]();
@@ -333,7 +333,7 @@ function onb(){const I=(l,id,t="number",o="")=>`<div><label>${l}</label><input i
 function onbDone(){const g=i=>$(i).value,n=i=>parseFloat(g(i));const a=n("oa"),h=n("oh"),w=n("ow"),t=n("ot"),b=n("ob");
  if(!(a>=13&&a<=100&&h>=100&&h<=230&&w>=30&&w<=300&&t>=30&&t<=300&&b>=0)){$("oe").textContent="Please fill in every number with sensible values (age 13+).";return}
  S.p={name:g("on").trim(),age:a,sex:g("os"),h,w0:w,tw:t,act:+g("oc"),budget:b};S.ok=true;save();render()}
-let uid=null,sb=null,authMsg="";
+let uid=null,sb=null,authMsg="",booted=false;
 function authView(){return `<h1>FitTrack</h1><div class="card"><label>Email</label><input id="ae" type="email" autocomplete="email"><label>Password</label><input id="ap" type="password" autocomplete="current-password"><div class="mu" style="color:#e5a04a;margin:6px 0">${esc(authMsg)}</div><button style="width:100%" onclick="auth('in')">Sign in</button><div class="row" style="margin-top:8px"><button class="g" onclick="auth('up')">Create account</button><button class="g" onclick="auth('reset')">Forgot password</button></div></div><div class="mu">Your data is private to your account.</div>`}
 async function auth(m){const e=$("ae").value.trim(),p=$("ap").value;if(!sb){authMsg="Backend not set up yet (see README).";render();return}
  authMsg="";try{let r;const back=location.origin+location.pathname;
@@ -347,12 +347,15 @@ async function pull(){try{if(localStorage.getItem("ft2_owner")!==uid){S=def();lo
   if(data&&data.state&&Object.keys(data.state).length&&(data.state.u||0)>(S.u||0)){S=Object.assign(def(),data.state);try{localStorage.setItem("ft2",JSON.stringify(S))}catch(e){}sy("synced")}else push()}catch(e){sy("offline: saved on this phone")}}
 async function push(){if(!sb||!uid)return;try{const {error}=await sb.from("user_state").upsert({user_id:uid,state:JSON.parse(JSON.stringify(S)),updated_at:new Date().toISOString()});if(error)throw error;sy("synced")}catch(e){sy("will sync when online")}}
 async function signOut(){try{await sb.auth.signOut()}catch(e){}S=def();try{localStorage.removeItem("ft2");localStorage.removeItem("ft2_owner")}catch(e){}uid=null;render()}
-async function boot(){if(!window.supabase||SB_URL.startsWith("PASTE")){authMsg="Setup needed: add your Supabase URL and key (see README).";render();return}
+async function boot(){
+ const done=()=>{booted=true;render()};setTimeout(()=>{if(!booted){authMsg="Couldn’t restore your session. Please sign in.";done()}},6000);
+ if(!window.supabase||SB_URL.startsWith("PASTE")){authMsg="Setup needed: add your Supabase URL and key (see README).";done();return}
  sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,storage:window.localStorage}});try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
  document.addEventListener("visibilitychange",()=>{if(!document.hidden&&sb&&uid)pull()});
- sb.auth.onAuthStateChange(async(ev,ses)=>{if(ev==="PASSWORD_RECOVERY"){const p=prompt("Enter a new password");if(p){const r=await sb.auth.updateUser({password:p});if(r.error)alert(r.error.message)}}
-  const nu=ses?ses.user.id:null;if(nu&&nu!==uid){uid=nu;await pull();render()}else if(!nu&&uid&&ev==="SIGNED_OUT"){uid=null;render()}});
- try{const {data}=await sb.auth.getSession();if(data.session){uid=data.session.user.id;await pull()}}catch(e){}render()}
+ sb.auth.onAuthStateChange((ev,ses)=>{setTimeout(async()=>{if(ev==="PASSWORD_RECOVERY"){const p=prompt("Enter a new password");if(p){const r=await sb.auth.updateUser({password:p});if(r.error)alert(r.error.message)}}
+  const nu=ses?ses.user.id:null;if(nu&&nu!==uid){uid=nu;await pull();render()}else if(!nu&&uid&&ev==="SIGNED_OUT"){uid=null;render()}},0)});
+ try{const {data}=await sb.auth.getSession();if(data.session){uid=data.session.user.id;await pull()}}catch(e){}
+ done()}
 boot();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
