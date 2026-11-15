@@ -28,6 +28,8 @@ nav b{display:block;font-size:20px}.item{display:flex;justify-content:space-betw
 .item:last-child{border:0}.x{background:none;color:var(--mu);padding:0 8px;min-height:0}
 .pill{display:inline-block;padding:2px 8px;border-radius:99px;background:var(--bd);font-size:12px;color:var(--mu)}
 .msg{white-space:pre-wrap}.mb{display:flex;justify-content:space-between;align-items:center;width:100%;margin-bottom:10px;padding:16px 18px;text-align:left}.sync{position:fixed;top:calc(env(safe-area-inset-top,0px) + 6px);right:10px;font-size:11px;color:var(--mu)}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}.bento .t{margin:0;min-width:0}.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.mid{font-size:24px;font-weight:800;margin:2px 0}
+nav{overflow:visible}nav button.big b{width:52px;height:52px;line-height:52px;border-radius:50%;background:var(--ac);color:#08121c;margin:-26px auto 2px;box-shadow:0 4px 14px color-mix(in srgb,var(--ac) 45%,transparent)}nav button.big.on{background:none}nav button{align-self:flex-end}
 </style></head><body>
 <div class="sync" id="sync">local only</div>
 <main id="app"></main>
@@ -38,6 +40,132 @@ const SB_URL="https://labqpmvzowckhpquukay.supabase.co",SB_KEY="eyJhbGciOiJIUzI1
 const TODAY=()=>new Date().toISOString().slice(0,10);
 const WA=[["Leg press",3,"8–12"],["Machine chest press",3,"8–12"],["Lat pulldown",3,"8–12"],["Seated leg curl",3,"8–12"],["Seated cable row",3,"8–12"],["Plank",2,"hold"]];
 const WB=[["Goblet squat",3,"8–12"],["Dumbbell Romanian deadlift",3,"8–12"],["Incline chest press",3,"8–12"],["Assisted pull-up",3,"8–12"],["Shoulder press machine",3,"8–12"],["Dead bugs",2,"10/side"]];
+const WK={A:{n:"Workout A",e:WA},B:{n:"Workout B",e:WB},
+C:{n:"Push",e:[["Dumbbell bench press",3,"8–12"],["Incline dumbbell press",3,"8–12"],["Shoulder press machine",3,"8–12"],["Lateral raise",3,"12–15"],["Triceps pushdown",3,"10–12"],["Chest fly machine",2,"12–15"]]},
+D:{n:"Pull",e:[["Lat pulldown",3,"8–12"],["Seated cable row",3,"8–12"],["Face pull",3,"12–15"],["Dumbbell curl",3,"10–12"],["Hammer curl",2,"10–12"],["Back extension",2,"12"]]},
+E:{n:"Legs",e:[["Leg press",3,"8–12"],["Romanian deadlift",3,"8–10"],["Leg extension",3,"10–12"],["Seated leg curl",3,"10–12"],["Standing calf raise",3,"12–15"],["Walking lunges",2,"10/leg"]]},
+F:{n:"Full body",e:[["Goblet squat",3,"8–12"],["Machine chest press",3,"8–12"],["Seated cable row",3,"8–12"],["Dumbbell shoulder press",3,"8–12"],["Seated leg curl",2,"10–12"],["Plank",2,"hold"]]},
+G:{n:"Core & cardio",e:[["Plank",3,"hold"],["Dead bugs",3,"10/side"],["Cable crunch",3,"12–15"],["Hanging knee raise",3,"8–12"],["Russian twist",2,"20"],["Incline walk (mins)",1,"15–20"]]}};
+const PRE=`Chicken breast, cooked|100g|165|31|0|3.6
+Chicken thigh, skinless, cooked|100g|209|26|0|11
+Turkey mince, cooked|100g|170|27|0|7
+Beef mince 5% fat, cooked|100g|170|26|0|7
+Beef mince 15% fat, cooked|100g|250|26|0|16
+Sirloin steak, grilled|100g|200|30|0|9
+Pork loin, cooked|100g|190|29|0|8
+Bacon, grilled|2 rashers|120|9|0|9
+Pork sausage, grilled|1 sausage|140|7|4|10
+Ham, sliced|2 slices|40|6|0|1.5
+Salmon fillet, baked|100g|200|22|0|12
+Cod fillet, baked|100g|105|23|0|1
+Tuna, canned in water|100g drained|110|25|0|1
+Prawns, cooked|100g|100|22|0|1
+Egg, boiled|1 large|90|7.5|0.4|6.5
+Scrambled eggs with butter|2 eggs|220|14|1|17
+Whole milk|200ml|130|6.6|9.4|7.4
+Semi-skimmed milk|200ml|92|6.8|9.6|3.2
+Greek yoghurt, 0% fat|150g|88|15|6|0.3
+Greek-style yoghurt, full fat|150g|180|7|7|13
+High-protein yoghurt or skyr|150g|90|16|6|0.3
+Cottage cheese|100g|98|11|3.4|4.3
+Cheddar cheese|30g|125|7.5|0|10.4
+Mozzarella|50g|130|9.5|1|10
+Butter|10g|74|0|0|8.2
+Whey protein shake, in water|1 scoop 30g|120|24|3|1.5
+White rice, cooked|150g|195|4|43|0.4
+Brown rice, cooked|150g|165|3.7|35|1.4
+Pasta, cooked|150g|235|8|47|1.4
+Wholewheat pasta, cooked|150g|220|9|42|2
+Egg noodles, cooked|150g|180|6|35|1.7
+Jacket potato with skin|200g|190|5|43|0.3
+Boiled potatoes|150g|105|2.5|24|0.2
+Sweet potato, baked|150g|135|2.4|31|0.2
+Oven chips|150g|270|4|45|8
+Potato wedges, oven|150g|250|4|38|9
+White bread|1 slice|90|3.4|17|1
+Wholemeal bread|1 slice|85|4|15|1
+Tortilla wrap, large|1 wrap|190|5|32|4.5
+Bagel|1 bagel|250|10|49|1.5
+Porridge oats, dry|40g|150|4.5|26|3
+Overnight oats with milk|1 portion|240|10|35|6
+Weetabix|2 biscuits|136|4.6|26|1
+Cornflakes|30g|113|2.4|25|0.3
+Granola|40g|180|4|26|6.5
+Banana|1 medium|105|1.3|27|0.4
+Apple|1 medium|80|0.4|21|0.3
+Orange|1 medium|65|1.3|15|0.2
+Strawberries|100g|32|0.7|7.7|0.3
+Blueberries|80g|46|0.6|11|0.2
+Grapes|100g|69|0.7|18|0.2
+Broccoli, cooked|80g|28|2.3|2|0.5
+Carrots, boiled|80g|25|0.5|5|0.2
+Peas, cooked|80g|65|5|9|1
+Sweetcorn|80g|75|2.2|14|1
+Baked beans|200g|156|9.6|26|0.6
+Mixed salad|80g|14|0.8|2|0.2
+Peppers, sliced|80g|20|0.7|4|0.2
+Avocado|half, 70g|112|1.4|0.6|10.5
+Peanut butter|15g|95|3.8|1.5|8
+Almonds|25g|145|5.3|1.5|12.5
+Olive oil|1 tbsp|120|0|0|14
+Mayonnaise|1 tbsp|100|0.1|0.3|11
+Hummus|50g|85|4|5|6
+Chicken burrito bowl, homemade|1 bowl|550|45|60|13
+Chicken wrap, homemade|1 wrap|450|35|42|15
+Beef chilli with rice|1 portion|580|38|65|16
+Chicken pasta, homemade|1 portion|600|45|70|14
+Tuna jacket potato|1 potato|400|34|50|7
+Homemade burger in a bun|1 burger|480|32|35|22
+Eggs on toast|2 eggs, 2 slices|390|21|34|19
+Spaghetti bolognese|1 portion|600|32|72|18
+Chicken curry with rice|1 portion|650|35|75|22
+Margherita pizza, thin|half a pizza|430|20|50|17
+Fish and chips|1 portion|850|35|85|42
+Cheese sandwich|1 sandwich|390|16|34|20
+Chicken sandwich|1 sandwich|380|28|36|12
+Sausage roll|1 roll|310|8|24|21
+Protein bar|1 bar|220|20|20|8
+Chocolate bar, milk|45g|240|3.5|26|13.5
+Crisps|25g bag|130|1.5|13|8
+Rice cakes|2 cakes|70|1.5|15|0.5
+Digestive biscuit|1 biscuit|70|1|9.5|3
+Cereal bar|1 bar|100|1.5|17|3
+Orange juice|200ml|88|1.4|19|0.2
+Cola|330ml can|139|0|35|0
+Diet cola|330ml can|1|0|0|0
+Black coffee|1 cup|2|0.3|0|0
+Latte, semi-skimmed|1 medium|140|9|12|5
+Beer|1 pint|215|2|18|0`.trim().split("\n").map(l=>{const a=l.split("|");return[a[0],a[1],+a[2],+a[3],+a[4],+a[5]]});
+function tg(){const k=kt(),p=S.t.p,f=Math.round(k*0.25/9),c=Math.max(0,Math.round((k-p*4-f*9)/4));return{k,p,f,c}}
+function ring(v,t,z){const r=z/2-10,C=2*Math.PI*r,pc=Math.max(0,Math.min(1,v/t));return `<svg width="${z}" height="${z}" viewBox="0 0 ${z} ${z}"><circle cx="${z/2}" cy="${z/2}" r="${r}" fill="none" stroke="var(--bd)" stroke-width="10"/><circle cx="${z/2}" cy="${z/2}" r="${r}" fill="none" stroke="var(--ac)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${C*pc} ${C}" transform="rotate(-90 ${z/2} ${z/2})"/></svg>`}
+function wkCount(){const s=new Set(),lim=Date.now()-6048e5;Object.values(S.log).flat().forEach(e=>{if(new Date(e.d).getTime()>=lim)s.add(e.d+e.w)});return s.size}
+function home(){const d=TODAY(),T=tot(d),G=tg(),h=hb(),lost=S.p.w0-cur(),shopT=S.shop.reduce((a,x)=>a+(+x.pr||0),0),cal=Math.round(G.k-T.k);
+ const M=(l,v,t)=>{const left=Math.round(t-v);return `<div class="card t s2" onclick="go('food')"><div class="mu">${l}</div><div class="mid">${left<0?-left+"g over":left+"g"}</div>${prog(v,t)}<div class="mu">${Math.round(v)} / ${t}g</div></div>`};
+ return `<h1>Hi ${esc(S.p.name||"there")} 👋</h1><div class="bento">
+ <div class="card t s6" style="display:flex;align-items:center;gap:16px"><div style="position:relative;flex:0 0 auto">${ring(T.k,G.k,128)}<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center"><div class="big" style="font-size:28px">${Math.abs(cal)}</div><div class="mu">${cal<0?"kcal over":"kcal left"}</div></div></div><div style="flex:1"><div class="mu">Eaten today</div><div class="mid">${Math.round(T.k)}<span class="mu"> / ${G.k} kcal</span></div><button style="margin-top:8px" onclick="go('food')">Log food</button></div></div>
+ ${M("Protein left",T.p,G.p)}${M("Carbs left",T.c,G.c)}${M("Fat left",T.f,G.f)}
+ <div class="card t s4"><div class="mu">Next workout</div><div class="big">${WK[nextW()].n}</div><div class="mu">${wkCount()} session${wkCount()===1?"":"s"} in the last 7 days</div><button style="margin-top:8px" onclick="wk='${nextW()}';go('train')">Start</button></div>
+ <div class="card t s2" onclick="go('prog')"><div class="mu">Weight</div><div class="mid">${fmt(cur())}<span class="mu">kg</span></div><div class="mu">${fmt(lost)} lost</div>${prog(lost,S.p.w0-S.p.tw)}</div>
+ <div class="card t s3"><div class="mu">Water</div><div class="mid">${h.water}<span class="mu"> / 2500 ml</span></div>${prog(h.water,2500)}<button class="g" style="padding:6px 12px;min-height:0" onclick="hset('water',hb().water+250)">+250 ml</button></div>
+ <div class="card t s3"><div class="mu">Supplements today</div><div class="row" style="margin-top:8px"><button class="${h.c?"":"g"}" style="padding:8px;min-height:0" onclick="hset('c',!hb().c)">Creatine ${h.c?"✓":""}</button><button class="${h.w?"":"g"}" style="padding:8px;min-height:0" onclick="hset('w',!hb().w)">Whey ${h.w?"✓":""}</button></div></div>
+ <div class="card t s2" onclick="go('habits')"><div class="mu">Steps</div><div class="mid">${h.steps||0}</div></div>
+ <div class="card t s2" onclick="go('habits')"><div class="mu">Sleep</div><div class="mid">${h.sleep||"–"}<span class="mu">h</span></div></div>
+ <div class="card t s2" onclick="go('shop')"><div class="mu">Shopping</div><div class="mid">£${fmt(shopT)}</div><div class="mu">of £${S.p.budget}</div></div>
+ </div>`}
+function aiMsg(e){const c=e&&e.code;return c==="offline"?"You’re offline. AI needs an internet connection.":c===404?"AI isn’t set up yet: the ‘ai’ function hasn’t been deployed (see README).":c==="no_key"?"AI isn’t set up yet: the Gemini key is missing (see README).":c==="limit"?"Daily AI limit reached. Try again tomorrow.":(c==="unauthorised"||c===401)?"Please sign in again.":String(c).startsWith("upstream_429")||c==="upstream_429"?"The free AI limit was hit. Wait a minute and try again.":"AI problem ("+c+"). Try again, or add food manually."}
+async function ai(prompt,o={}){if(!navigator.onLine)throw{code:"offline"};
+ const {data,error}=await sb.functions.invoke("ai",{body:{prompt,json:!!o.json,image:o.image||null}});
+ if(error){let c="error";try{const b=await error.context.json();c=b.error||error.context.status}catch(x){try{c=error.context.status}catch(y){}}throw{code:c}}
+ if(data&&data.error)throw{code:data.error};return data.text}
+async function imgB64(file){const u=URL.createObjectURL(file);const im=await new Promise((r,j)=>{const i=new Image();i.onload=()=>r(i);i.onerror=j;i.src=u});const sc=Math.min(1,1024/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*sc);c.height=Math.round(im.height*sc);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);return c.toDataURL("image/jpeg",0.8).split(",")[1]}
+async function getS(){if(!sb||!uid)return null;const f=async p=>({text:await ai(p)});
+ f.json=async(p,o={})=>{const img=o.images&&o.images[0]?await imgB64(o.images[0]):null;const t=await ai(p,{json:true,image:img});return JSON.parse(t.replace(/^\s*```(?:json)?/i,"").replace(/```\s*$/,"").trim())};return f}
+function fsearch(q){const w=q.toLowerCase().split(/\s+/).filter(Boolean),el=$("fr");if(!el)return;
+ const L=PRE.map((f,i)=>({f,i})).filter(x=>w.every(t=>(x.f[0]+" "+x.f[1]).toLowerCase().includes(t))).slice(0,w.length?12:0);
+ el.innerHTML=L.length?L.map(x=>`<div class="item"><span>${esc(x.f[0])}<br><span class="mu">${esc(x.f[1])} · ${x.f[2]} kcal · ${x.f[3]}g P · ${x.f[4]}g C · ${x.f[5]}g F</span></span><button class="g" style="padding:4px 12px;min-height:0" onclick="addPre(${x.i})">Add</button></div>`).join(""):(w.length?'<div class="mu">No match. Add it manually below.</div>':"")}
+function addPre(i){const f=PRE[i],q=+$("pq").value||1,h=new Date().getHours();(S.food[TODAY()]=S.food[TODAY()]||[]).push({n:f[0]+(q!==1?" ×"+q:"")+" ("+f[1]+")",k:f[2]*q,p:f[3]*q,c:f[4]*q,f:f[5]*q,m:$("pm").value});save();render()}
+const mealNow=()=>{const h=new Date().getHours();return h<11?"Breakfast":h<16?"Lunch":h<21?"Dinner":"Snacks"};
+
 const def=()=>({p:{name:"",age:"",sex:"male",h:"",w0:"",tw:"",act:1.55,budget:""},t:{k:0,p:150,auto:true},food:{},wt:[],log:{},fb:[],plan:[],shop:[],hab:{},meas:[],mem:[],noMem:false,ok:false,sup:{c:5,w:30}});
 let S=def(),tab="home",doc=null,wk="A",chat=[],busy=false,tmr=null,sample=null;
 try{const x=JSON.parse(localStorage.getItem("ft2"));if(x)S=Object.assign(def(),x)}catch(e){}
@@ -60,21 +188,17 @@ function suggestion(name,reps){const L=S.log[name]||[];if(!L.length)return"No hi
  const last=L[L.length-1];const ok=last.sets.length>=2&&last.sets.every(s=>s[1]>=12);
  const w=Math.max(...last.sets.map(s=>s[0]));return ok?`You hit 12 reps on every set at ${w} kg. Consider going up by the smallest step next time.`:`Last: ${last.sets.map(s=>s[0]+"×"+s[1]).join(", ")}. Keep ${w} kg until all sets reach 12 reps.`}
 function render(){if(!uid){$("nav").innerHTML="";$("app").innerHTML=authView();return}if(!S.ok){$("nav").innerHTML="";$("app").innerHTML=onb();return}
- const nav=[["home","⌂","Home"],["food","🍽","Food"],["train","🏋","Train"],["prog","📈","Progress"],["coach","✦","Coach"],["more","☰","More"]];
- $("nav").innerHTML=nav.map(n=>`<button class="${tab===n[0]?"on":""}" onclick="go('${n[0]}')"><b>${n[1]}</b>${n[2]}</button>`).join("");
+ const nav=[["home","⌂","Home",22],["food","🍽","Food",20],["scan","📷","Scan",26,"big"],["train","🏋","Train",24],["prog","📈","Progress",19],["more","☰","More",17]];
+ $("nav").innerHTML=nav.map(n=>`<button class="${tab===n[0]?"on":""} ${n[4]||""}" onclick="go('${n[0]}')"><b style="font-size:${n[3]}px">${n[1]}</b>${n[2]}</button>`).join("");
  FT=[];$("app").innerHTML=({home,food,train,prog:progress,coach,me,more,plan,shop,habits,body,scan,mem})[tab]();
  if(tab==="coach"){const c=$("chatlog");if(c)c.scrollTop=c.scrollHeight}}
 function go(t){tab=t;render();scrollTo(0,0)}
-function home(){const d=TODAY(),T=tot(d),k=kt(),lost=S.p.w0-cur(),rem=cur()-S.p.tw;
- return `<h1>Hi ${esc(S.p.name||"there")} 👋</h1><div class="card"><div class="mu">Calories left</div><div class="big">${Math.round(k-T.k)}</div><div class="mu">${Math.round(T.k)} eaten of ${k} kcal</div>${prog(T.k,k)}
- <div class="mu">Protein ${Math.round(T.p)} / ${S.t.p} g</div>${prog(T.p,S.t.p)}</div>
- <div class="card"><div class="mu">Weight</div><div class="big">${fmt(cur())} kg</div><div class="mu">Lost ${fmt(lost)} kg · ${fmt(Math.max(0,rem))} kg to go · target ${S.p.tw} kg</div>${prog(lost,S.p.w0-S.p.tw)}</div>
- <div class="card"><div class="mu">Next workout</div><div class="big">Workout ${nextW()}</div><button style="margin-top:8px" onclick="wk='${nextW()}';go('train')">Start</button></div>`}
-function nextW(){const ds=Object.values(S.log).flat().map(x=>x.d+x.w).sort();const last=ds.length?ds[ds.length-1].slice(10):"B";return last==="A"?"B":"A"}
+function nextW(){const ds=Object.values(S.log).flat().filter(x=>x.w==="A"||x.w==="B").map(x=>x.d+x.w).sort();const last=ds.length?ds[ds.length-1].slice(10):"B";return last==="A"?"B":"A"}
 function food(){const d=TODAY(),T=tot(d);
  const meals=["Breakfast","Lunch","Dinner","Snacks"];
  return `<h1>Food diary</h1><div class="card"><div class="row"><div><div class="mu">kcal</div><b>${Math.round(T.k)}</b></div><div><div class="mu">Protein</div><b>${Math.round(T.p)} g</b></div><div><div class="mu">Carbs</div><b>${Math.round(T.c)} g</b></div><div><div class="mu">Fat</div><b>${Math.round(T.f)} g</b></div></div></div>
- <div class="card"><label>Food</label><input id="fn" placeholder="e.g. Chicken and rice">
+ <div class="card"><label>Search common foods</label><input id="fq" placeholder="e.g. chicken, rice, banana" oninput="fsearch(this.value)"><div class="row" style="margin-top:6px"><select id="pq"><option value="0.5">½ serving</option><option value="1" selected>1 serving</option><option value="1.5">1½ servings</option><option value="2">2 servings</option><option value="3">3 servings</option></select><select id="pm">${["Breakfast","Lunch","Dinner","Snacks"].map(m=>`<option ${m===mealNow()?"selected":""}>${m}</option>`).join("")}</select></div><div id="fr"></div><div class="mu">Typical values: check the label on your own food.</div></div>
+ <div class="card"><label>Or add your own</label><input id="fn" placeholder="e.g. Chicken and rice">
  <div class="row"><div><label>kcal</label><input id="fk" type="number" inputmode="decimal"></div><div><label>Protein g</label><input id="fp" type="number" inputmode="decimal"></div><div><label>Carbs g</label><input id="fc" type="number" inputmode="decimal"></div><div><label>Fat g</label><input id="ff" type="number" inputmode="decimal"></div></div>
  <label>Meal</label><select id="fm">${meals.map(m=>`<option>${m}</option>`).join("")}</select>
  <button style="margin-top:10px;width:100%" onclick="addFood()">Add</button>
@@ -84,15 +208,15 @@ function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;","
 function addFood(){const n=$("fn").value.trim(),k=+$("fk").value;if(!n||!(k>=0)||$("fk").value==="")return;
  (S.food[TODAY()]=S.food[TODAY()]||[]).push({n,k,p:+$("fp").value||0,c:+$("fc").value||0,f:+$("ff").value||0,m:$("fm").value});save();render()}
 function delFood(i){S.food[TODAY()].splice(i,1);save();render()}
-function train(){const W=wk==="A"?WA:WB;
- return `<h1>Workouts</h1><div class="row"><button class="${wk==="A"?"":"g"}" onclick="wk='A';render()">Workout A</button><button class="${wk==="B"?"":"g"}" onclick="wk='B';render()">Workout B</button></div>
+function train(){const W=WK[wk].e;
+ return `<h1>Workouts</h1><div class="row" style="overflow-x:auto;flex-wrap:nowrap;padding-bottom:6px">${Object.keys(WK).map(k=>`<button class="${wk===k?"":"g"}" style="flex:0 0 auto" onclick="wk='${k}';render()">${WK[k].n}</button>`).join("")}</div>
  ${W.map((e,i)=>`<div class="card"><b>${e[0]}</b> <span class="pill">${e[1]} × ${e[2]}</span><div class="mu" style="margin:4px 0 8px">${esc(suggestion(e[0]))}</div>
  <div class="row"><input id="w${i}" type="number" inputmode="decimal" placeholder="kg"><input id="r${i}" type="number" inputmode="numeric" placeholder="reps/secs"><button onclick="addSet(${i})">Log set</button></div>
  <div id="s${i}" class="mu" style="margin-top:6px">${todaySets(e[0])}</div></div>`).join("")}
  <div class="card"><div class="row"><button class="g" onclick="rest(90)">Rest 90s</button><button class="g" onclick="rest(120)">Rest 2m</button></div><div id="rt" class="big" style="text-align:center"></div></div>`}
 function todaySets(n){const e=(S.log[n]||[]).find(x=>x.d===TODAY()&&x.w===wk);return e?e.sets.map(s=>s[0]+"kg×"+s[1]).join(" · "):""}
 let rI;function rest(s){clearInterval(rI);let t=s;const el=$("rt");el.textContent=t;rI=setInterval(()=>{t--;const e=$("rt");if(!e){clearInterval(rI);return}e.textContent=t>0?t:"Go!";if(t<=0)clearInterval(rI)},1000)}
-function addSet(i){const W=wk==="A"?WA:WB,n=W[i][0],w=+$("w"+i).value||0,r=+$("r"+i).value;if(!r)return;
+function addSet(i){const W=WK[wk].e,n=W[i][0],w=+$("w"+i).value||0,r=+$("r"+i).value;if(!r)return;
  const L=S.log[n]=S.log[n]||[];let e=L.find(x=>x.d===TODAY()&&x.w===wk);if(!e){e={d:TODAY(),w:wk,sets:[]};L.push(e)}e.sets.push([w,r]);save();
  $("s"+i).textContent=todaySets(n);$("r"+i).value="";rest(90)}
 function progress(){const w=S.wt,a=avg7();
@@ -109,17 +233,17 @@ function addW(){const v=+$("nw").value;if(!v)return;const d=TODAY(),i=S.wt.findI
 function ctx(){const d=TODAY(),days=[...Array(7)].map((_,i)=>{const x=new Date();x.setDate(x.getDate()-i);return x.toISOString().slice(0,10)});
  const wkAvg=days.map(x=>tot(x)).filter(t=>t.k>0);const n=wkAvg.length||1;
  return JSON.stringify({profile:S.p,targets:{kcal:kt(),protein:S.t.p},today:tot(d),last7DayAvgIntake:{kcal:Math.round(wkAvg.reduce((s,t)=>s+t.k,0)/n),protein:Math.round(wkAvg.reduce((s,t)=>s+t.p,0)/n),daysLogged:wkAvg.length},weights:S.wt.slice(-21),currentWeight:cur(),memory:S.noMem?[]:S.mem.map(m=>m.t),habitsToday:S.hab[TODAY()]||{},measurements:S.meas.slice(-3),strength:Object.fromEntries(Object.entries(S.log).map(([k,v])=>[k,v.slice(-4)]))})}
-function coach(){return `<h1>AI coach</h1><div class="card" id="chatlog" style="max-height:52vh;overflow:auto">${chat.length?chat.map(m=>`<div class="item" style="display:block"><span class="pill">${m.r==="user"?"You":"Coach"}</span><div class="msg">${esc(m.c)}</div>${m.r==="ai"&&m.c.length>25?fbRow(m.c.slice(0,60),1):""}</div>`).join(""):'<span class="mu">Ask about today’s food, your training, or your progress. The coach only sees what you’ve logged in this app.</span>'}</div>
+function coach(){return `${back()}<h1>AI coach</h1><div class="card" id="chatlog" style="max-height:52vh;overflow:auto">${chat.length?chat.map(m=>`<div class="item" style="display:block"><span class="pill">${m.r==="user"?"You":"Coach"}</span><div class="msg">${esc(m.c)}</div>${m.r==="ai"&&m.c.length>25?fbRow(m.c.slice(0,60),1):""}</div>`).join(""):'<span class="mu">Ask about today’s food, your training, or your progress. The coach only sees what you’ve logged in this app.</span>'}</div>
  <div class="row"><button class="g" onclick="ask('What should I eat today to hit my remaining calories and protein? Keep it cheap and low on vegetables.')">What to eat</button><button class="g" onclick="ask('Review my progress this week and tell me what to improve.')">Weekly review</button></div>
  <div class="row" style="margin-top:8px"><input id="q" placeholder="Ask anything…" onkeydown="if(event.key==='Enter')ask()"><button style="flex:0 0 auto" onclick="ask()">Send</button></div>
  <div class="mu" style="margin-top:8px">Needs an internet connection. General guidance only, not medical advice.</div>`}
 async function ask(t){const q=t||$("q").value.trim();if(!q||busy)return;
- sample=await getS();if(!sample){chat.push({r:"user",c:q},{r:"ai",c:"AI features are coming in the next phase. Everything else works now."});render();return}
+ sample=await getS();if(!sample){chat.push({r:"user",c:q},{r:"ai",c:"Sign in and go online to use the coach."});render();return}
  chat.push({r:"user",c:q},{r:"ai",c:"Thinking…"});busy=true;render();
  const hist=chat.slice(0,-1).slice(-8).map(m=>`${m.r==="user"?"User":"Coach"}: ${m.c}`).join("\n");
  const sys="You are a careful fitness and nutrition coach for one person. Use ONLY the JSON data below as their records; never invent logs. If data is missing, say so. Explain your reasoning briefly. Never recommend crash diets, under ~1800 kcal for an adult male, excessive training or high supplement doses; don't diagnose. Any change to calorie targets, weight goals or training must be framed as a suggestion for the user to approve. Be concise, British English, prices in £.\nDATA: "+ctx()+"\nCONVERSATION:\n"+hist+"\nReply as Coach.";
  try{const r=await sample(sys,{cache:false,onText:({text})=>{chat[chat.length-1].c=text;const l=$("chatlog");if(tab==="coach"&&l){render()}}});chat[chat.length-1].c=r.text}
- catch(e){chat[chat.length-1].c="Couldn’t reach the coach ("+(e.code||"error")+"). Check your connection and try again."}
+ catch(e){chat[chat.length-1].c=aiMsg(e)}
  busy=false;render()}
 function me(){const p=S.p;const f=(l,k,t="number",o="")=>`<div><label>${l}</label><input type="${t}" ${o} value="${p[k]}" onchange="setP('${k}',this.value)"></div>`;
  return `<h1>Profile & targets</h1><div class="card">${f("Name","name","text")}<div class="row">${f("Age","age")}${f("Height cm","h")}</div><div class="row">${f("Start kg","w0","number",'step="0.1"')}${f("Target kg","tw","number",'step="0.1"')}</div>
@@ -135,23 +259,22 @@ function setP(k,v){S.p[k]=(k==="sex"||k==="name")?v:+v;save();render()}
 async function exp(){const b=new Blob([JSON.stringify(S,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="fittrack-data.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function wipe(){if(!confirm("Delete all your data? This can’t be undone."))return;S=def();save();render()}
 let FT=[],pmsg="",scanR=null,scanMsg="";
-const back=()=>`<button class="g" onclick="go('more')">‹ More</button>`;
-function more(){const L=[["plan","Meal plan & recipes"],["shop","Shopping list & budget"],["scan","AI food scan"],["habits","Supplements & habits"],["body","Body measurements"],["mem","What the AI has learned"],["me","Profile & targets"]];return `<h1>More</h1>`+L.map(l=>`<button class="mb" onclick="go('${l[0]}')"><span>${l[1]}</span><span>›</span></button>`).join("")+`<div class="mu">Not in this version: family groups, barcode scanning, push notifications. Your data is saved to the account you’re signed in with, so each person should open this link in their own account.</div>`}
-async function getS(){return null}
+const back=()=>tab==="scan"?"":`<button class="g" onclick="go('more')">‹ More</button>`;
+function more(){const L=[["coach","AI coach"],["plan","Meal plan & recipes"],["shop","Shopping list & budget"],["scan","AI food scan"],["habits","Supplements & habits"],["body","Body measurements"],["mem","What the AI has learned"],["me","Profile & targets"]];return `<h1>More</h1>`+L.map(l=>`<button class="mb" onclick="go('${l[0]}')"><span>${l[1]}</span><span>›</span></button>`).join("")+`<div class="mu">Not in this version: family groups, barcode scanning, push notifications. Your data is saved to the account you’re signed in with, so each person should open this link in their own account.</div>`}
 function fbRow(t,c){FT.push(t);const i=FT.length-1,B=(k,l)=>`<button class="g" style="padding:4px 10px;min-height:0" onclick="fb('${k}',${i})">${l}</button>`;return `<div class="row" style="margin-top:6px">${c?B("help","👍 Helpful")+B("nohelp","👎 Not helpful"):B("like","👍 Like")+B("dislike","👎 Dislike")+B("exp","£ Too dear")+B("diff","↻ Different")}</div>`}
 function fb(k,i){const t=FT[i];S.fb.push({k,t,d:TODAY()});const P={like:"Likes: ",dislike:"Dislikes: ",exp:"Too expensive: "}[k];if(P&&!S.noMem&&!S.mem.some(m=>m.t===P+t))S.mem.push({t:P+t,src:"inferred"});save();sy("feedback saved")}
-async function genPlan(){const s=await getS();if(!s){pmsg="AI features are coming in the next phase.";render();return}
+async function genPlan(){const s=await getS();if(!s){pmsg="Sign in and go online to use AI.";render();return}
  pmsg="Generating…";render();const mem=S.noMem?[]:S.mem.map(m=>m.t);
- try{const r=await s.json(`Create 7 dinners (Mon–Sun) for a UK person. Their whole weekly food budget is £${S.p.budget}, so the 7 dinners should total about £${Math.round(S.p.budget*0.55)}. Daily target ${kt()} kcal, ${S.t.p} g protein; dislikes most vegetables; reuse ingredients across meals. Honour these notes: ${JSON.stringify(mem)}. Recent feedback: ${JSON.stringify(S.fb.slice(-15))}. Prices are rough UK estimates, not live. Return ONLY JSON: {"meals":[{"day":"Mon","name":"","kcal":0,"protein":0,"cost":0,"ingredients":[{"n":"","qty":"","price":0}],"steps":[""]}]}`,{cache:false});S.plan=r.meals||[];buildShop();pmsg=""}catch(e){pmsg="Couldn’t generate ("+(e.code||"error")+"). Needs internet."}
+ try{const r=await s.json(`Create 7 dinners (Mon–Sun) for a UK person. Their whole weekly food budget is £${S.p.budget}, so the 7 dinners should total about £${Math.round(S.p.budget*0.55)}. Daily target ${kt()} kcal, ${S.t.p} g protein; dislikes most vegetables; reuse ingredients across meals. Honour these notes: ${JSON.stringify(mem)}. Recent feedback: ${JSON.stringify(S.fb.slice(-15))}. Prices are rough UK estimates, not live. Return ONLY JSON: {"meals":[{"day":"Mon","name":"","kcal":0,"protein":0,"cost":0,"ingredients":[{"n":"","qty":"","price":0}],"steps":[""]}]}`,{cache:false});S.plan=r.meals||[];buildShop();pmsg=""}catch(e){pmsg=aiMsg(e)}
  save();render()}
 function buildShop(){const m={};S.plan.forEach(x=>(x.ingredients||[]).forEach(i=>{const k=String(i.n).toLowerCase();m[k]=m[k]||{n:i.n,q:[],pr:0,done:false};m[k].q.push(i.qty);m[k].pr+=+i.price||0}));S.shop=Object.values(m).map(x=>({n:x.n,q:x.q.join(" + "),pr:Math.round(x.pr*100)/100,done:false}))}
 function plan(){return `${back()}<h1>Meal plan</h1><button style="width:100%" onclick="genPlan()">${S.plan.length?"Regenerate":"Generate"} 7-day plan</button><div class="mu">${pmsg||"Uses your targets, budget and feedback. Costs are estimates, not live prices."}</div>`+S.plan.map((m,i)=>`<div class="card"><b>${esc(m.day)}: ${esc(m.name)}</b><div class="mu">${m.kcal} kcal · ${m.protein}g protein · est. £${fmt(m.cost)}</div><details><summary class="mu">Ingredients & method</summary>${(m.ingredients||[]).map(x=>`<div class="mu">• ${esc(x.qty)} ${esc(x.n)}</div>`).join("")}<ol class="mu">${(m.steps||[]).map(x=>`<li>${esc(x)}</li>`).join("")}</ol></details><div class="row"><button class="g" onclick="mealToDiary(${i})">Add to diary</button></div>${fbRow(m.name)}</div>`).join("")}
 function mealToDiary(i){const m=S.plan[i];(S.food[TODAY()]=S.food[TODAY()]||[]).push({n:m.name,k:+m.kcal||0,p:+m.protein||0,c:0,f:0,m:"Dinner"});save();sy("added to diary")}
 function shop(){const t=S.shop.reduce((a,x)=>a+(+x.pr||0),0);return `${back()}<h1>Shopping list</h1><div class="card"><div class="big">£${fmt(t)}</div><div class="mu">of £${S.p.budget} weekly budget (estimates; edit to actual price)</div>${prog(t,S.p.budget)}</div>`+(S.shop.length?`<div class="card">${S.shop.map((x,i)=>`<div class="item"><label style="margin:0;color:var(--tx);flex:1"><input type="checkbox" style="width:auto" ${x.done?"checked":""} onchange="S.shop[${i}].done=this.checked;save()"> ${esc(x.n)} <span class="mu">${esc(x.q)}</span></label><input type="number" step="0.01" style="width:80px" value="${x.pr}" onchange="S.shop[${i}].pr=+this.value;save();render()"></div>`).join("")}</div>`:`<div class="mu">Generate a meal plan first.</div>`)}
 async function doScan(){const f=$("sf").files[0],mode=$("sm").value;if(!f){scanMsg="Choose a photo first.";render();return}
- const s=await getS();let lim=null;try{lim=s&&await s.limits()}catch(e){}if(!lim||!lim.images){scanMsg="Image analysis isn’t available here. Use manual entry in Food.";render();return}
+ const s=await getS();if(!s){scanMsg="Sign in and go online to scan.";render();return}
  scanMsg="Analysing…";render();
- try{const r=await s.json((mode==="meal"?"Identify each food in this meal photo, estimate the portion eaten, and give nutrition for that portion. ":"Read this nutrition label and give values for one serving. ")+"Rate conf as low, medium or high. Never guess unreadable values. Return ONLY JSON: {\"items\":[{\"n\":\"\",\"k\":0,\"p\":0,\"c\":0,\"f\":0,\"conf\":\"\"}]}",{images:[f],cache:false});scanR=r.items||[];scanMsg=scanR.length?"":"Nothing identified."}catch(e){scanMsg="Scan failed ("+(e.code||"error")+"). Use manual entry."}
+ try{const r=await s.json((mode==="meal"?"Identify each food in this meal photo, estimate the portion eaten, and give nutrition for that portion. ":"Read this nutrition label and give values for one serving. ")+"Rate conf as low, medium or high. Never guess unreadable values. Return ONLY JSON: {\"items\":[{\"n\":\"\",\"k\":0,\"p\":0,\"c\":0,\"f\":0,\"conf\":\"\"}]}",{images:[f],cache:false});scanR=r.items||[];scanMsg=scanR.length?"":"Nothing identified."}catch(e){scanMsg=aiMsg(e)+" You can still add food manually."}
  render()}
 function scan(){const I=(i,k,l)=>`<div><label>${l}</label><input type="number" value="${scanR[i][k]}" onchange="scanR[${i}].${k}=+this.value"></div>`;return `${back()}<h1>AI food scan</h1><div class="card"><select id="sm"><option value="meal">Meal photo</option><option value="label">Nutrition label</option></select><input id="sf" type="file" accept="image/*" capture="environment" style="margin-top:8px"><button style="margin-top:8px;width:100%" onclick="doScan()">Analyse</button><div class="mu">${scanMsg||"Needs internet. Results are AI estimates: check and edit before adding."}</div></div>`+(scanR||[]).map((f,i)=>`<div class="card"><input value="${esc(f.n)}" onchange="scanR[${i}].n=this.value"><div class="mu">Estimate · confidence ${esc(f.conf||"?")}</div><div class="row">${I(i,"k","kcal")}${I(i,"p","P g")}${I(i,"c","C g")}${I(i,"f","F g")}</div><button style="margin-top:8px" onclick="scanAdd(${i})">Add to diary</button></div>`).join("")}
 function scanAdd(i){const f=scanR[i];(S.food[TODAY()]=S.food[TODAY()]||[]).push({n:f.n,k:+f.k||0,p:+f.p||0,c:+f.c||0,f:+f.f||0,m:"Snacks"});save();sy("added to diary")}
@@ -180,7 +303,8 @@ async function pull(){try{if(localStorage.getItem("ft2_owner")!==uid){S=def();lo
 async function push(){if(!sb||!uid)return;try{const {error}=await sb.from("user_state").upsert({user_id:uid,state:JSON.parse(JSON.stringify(S)),updated_at:new Date().toISOString()});if(error)throw error;sy("synced")}catch(e){sy("will sync when online")}}
 async function signOut(){try{await sb.auth.signOut()}catch(e){}S=def();try{localStorage.removeItem("ft2");localStorage.removeItem("ft2_owner")}catch(e){}uid=null;render()}
 async function boot(){if(!window.supabase||SB_URL.startsWith("PASTE")){authMsg="Setup needed: add your Supabase URL and key (see README).";render();return}
- sb=supabase.createClient(SB_URL,SB_KEY);
+ sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,storage:window.localStorage}});try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden&&sb&&uid)pull()});
  sb.auth.onAuthStateChange(async(ev,ses)=>{if(ev==="PASSWORD_RECOVERY"){const p=prompt("Enter a new password");if(p){const r=await sb.auth.updateUser({password:p});if(r.error)alert(r.error.message)}}
   const nu=ses?ses.user.id:null;if(nu&&nu!==uid){uid=nu;await pull();render()}else if(!nu&&uid&&ev==="SIGNED_OUT"){uid=null;render()}});
  try{const {data}=await sb.auth.getSession();if(data.session){uid=data.session.user.id;await pull()}}catch(e){}render()}
