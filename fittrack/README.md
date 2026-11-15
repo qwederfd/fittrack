@@ -1,7 +1,7 @@
 # FitTrack: setup guide (free)
 
-Phase 1: email accounts, private data per person, offline logging, home-screen install.
-Not built yet: AI coach, meal plan, food scan (the screens exist but say "coming next phase"), barcode, family groups, push notifications.
+Includes: email accounts that stay signed in, private data per person, offline logging, home-screen install, 90 preset foods, 7 workout programmes, and AI (coach, meal plan, food scan) once you complete the AI setup below.
+Not built yet: barcode scanning, family groups, push notifications.
 I could not test this against a live Supabase project, so follow the checks in step 6.
 
 ## 1. Supabase (accounts and database)
@@ -41,3 +41,29 @@ Open `index.html`, find these two lines near the top of the script, and paste yo
 
 ## Next phases
 AI (Gemini via a Supabase Edge Function, key kept secret, free tier first), barcode via Open Food Facts, family groups and invites, push notifications.
+
+
+## 7. Turn on the AI (coach, meal plan, food scan)
+The AI features do nothing until this is done. I have not been able to test it against a live project.
+1. Re-run the extra block at the bottom of `schema.sql` in the Supabase SQL Editor (the `ai_usage` table).
+2. Get a Gemini key at aistudio.google.com (sign in with Google, **Get API key**). Never paste it into `index.html`.
+3. Supabase dashboard > **Edge Functions** > **Deploy a new function** > **Via Editor**. Name it exactly `ai`, paste in the contents of `supabase/functions/ai/index.ts`, and deploy.
+4. Edge Functions > **Secrets**: add `GEMINI_API_KEY` (your key). Optional: `GEMINI_MODEL` (default `gemini-flash-latest`) and `DAILY_AI_CAP` (default 40 requests per person per day).
+5. Reload the app and try the Scan tab with a photo of a meal.
+
+Errors on the Scan or Coach screens say what is wrong (not deployed, key missing, daily limit, free-tier limit).
+Privacy: on Google's free tier, what you send may be used to improve Google products. Switch your Gemini project to paid billing before the whole family uses scanning regularly.
+
+## Staying signed in
+Sign-in is remembered on each device and renews itself. You are only asked again if you tap Sign out, clear the browser data, or Safari removes site data after about a week of not opening the site. **Add it to the Home Screen** on iPhone to avoid that.
+
+## Layout (no More tab)
+- Home: calories ring, macros left, tiles; ⚙ opens Profile (targets, why-these-numbers, AI memory, export, sign out).
+- Food: Diary, Meal plan, Shopping. Scan: live camera. Train: Workouts (with favourites), Coach. Progress: Weight (with target check), Body, Habits.
+- The camera opens by itself on the Scan tab (browsers ask permission the first time; it cannot open before you tap the tab).
+
+## Easiest way to turn on AI (no server)
+In the app: ⚙ (top right of Home) > **AI setup**. Paste a free Gemini key from aistudio.google.com/apikey, tap **Save key**, then **Test AI**. The key is stored only on that device and cleared on sign out, so each person does this once on their own phone (and again in the Home Screen app, which has separate storage). The Supabase function in section 7 is the alternative if you later want the key kept off phones.
+
+## Food database
+Diary > "Search the food database" uses Open Food Facts (free, community-made, strong on UK supermarket products). Values are per 100 g and scaled to the amount you enter. It needs internet and the site asks users to be gentle with search, so avoid rapid repeated searches.
